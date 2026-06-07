@@ -1,19 +1,20 @@
 export type AgentStatus = 'idle' | 'active' | 'warning' | 'compromised' | 'sandboxed' | 'killed';
 export type ThreatLevel = 'none' | 'low' | 'medium' | 'high' | 'critical';
 export type InterceptAction = 'pass' | 'warn' | 'sandbox' | 'human_review' | 'kill';
+export type ModelName = 'gpt-3.5-turbo' | 'gpt-4' | 'gpt-4o-mini';
+export type ModelType = 'Supervised' | 'Unsupervised' | 'Reinforcement' | 'Hybrid';
 
-export interface Agent {
-  id: string;
-  name: string;
-  role: string;
+export interface ModelProfile {
+  id: ModelName;
+  label: string;
   description: string;
-  allowedTools: string[];
-  trustScore: number;
-  status: AgentStatus;
-  manifestHash: string;
+  threshold: number;
+  riskScore: number;
+  quality: 'standard' | 'advanced' | 'experimental';
+  openAiModel: string;
 }
 
-export interface AgentMessage {
+export interface Agent {
   id: string;
   timestamp: number;
   fromAgent: string;
@@ -61,6 +62,8 @@ export interface PipelineSettings {
   autoRun: boolean;
   useSupabase: boolean;
   enableRealApi: boolean;
+  model: ModelName;
+  modelType: ModelType;
 }
 
 export type DemoPhase =

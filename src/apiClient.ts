@@ -1,5 +1,6 @@
 const openAiKey = import.meta.env.VITE_OPENAI_KEY as string | undefined;
 const openAiBase = (import.meta.env.VITE_OPENAI_API_BASE as string | undefined) ?? 'https://api.openai.com/v1';
+const APP_BASE_URL = 'https://agentwatch.ai';
 
 export const hasOpenAI = Boolean(openAiKey);
 
@@ -24,17 +25,17 @@ async function openAiRequest(payload: any) {
   return json;
 }
 
-export async function searchWeb(query: string, useRealApi = hasOpenAI) {
+export async function searchWeb(query: string, useRealApi = hasOpenAI, model = 'gpt-3.5-turbo') {
   if (!useRealApi || !hasOpenAI) {
     return [
-      { title: 'AI safety paper from 2025', snippet: `Latest research on ${query} shows an emphasis on interpretability, red-teaming, and robust model governance.`, url: 'https://example.com/ai-safety-2025' },
-      { title: 'Agent trust and prompt injection', snippet: `A new framework for agent trust evaluation and prompt injection mitigation in multi-agent systems.`, url: 'https://example.com/agent-trust' },
-      { title: 'Secure AI pipeline design', snippet: `Design patterns for secure autonomous pipelines and cross-agent verification.`, url: 'https://example.com/secure-pipelines' },
+      { title: 'AI safety paper from 2025', snippet: `Latest research on ${query} shows an emphasis on interpretability, red-teaming, and robust model governance.`, url: 'https://agentwatch.ai/resources/ai-safety-2025' },
+      { title: 'Agent trust and prompt injection', snippet: `A new framework for agent trust evaluation and prompt injection mitigation in multi-agent systems.`, url: 'https://agentwatch.ai/insights/agent-trust' },
+      { title: 'Secure AI pipeline design', snippet: `Design patterns for secure autonomous pipelines and cross-agent verification.`, url: 'https://agentwatch.ai/guide/secure-pipelines' },
     ];
   }
 
   const result = await openAiRequest({
-    model: 'gpt-3.5-turbo',
+    model,
     temperature: 0.3,
     messages: [
       { role: 'system', content: 'You are a research assistant that returns short web search-like results.' },
@@ -53,7 +54,7 @@ export async function searchWeb(query: string, useRealApi = hasOpenAI) {
   });
 }
 
-export async function summarizeQuery(query: string, sources: Array<{ title: string; snippet: string; url: string }>, useRealApi = hasOpenAI) {
+export async function summarizeQuery(query: string, sources: Array<{ title: string; snippet: string; url: string }>, useRealApi = hasOpenAI, model = 'gpt-3.5-turbo') {
   if (!useRealApi || !hasOpenAI) {
     return `Summary for "${query}":
 
@@ -64,7 +65,7 @@ export async function summarizeQuery(query: string, sources: Array<{ title: stri
 
   const sourceText = sources.map((s, index) => `${index + 1}. ${s.title}: ${s.snippet} (${s.url})`).join('\n');
   const result = await openAiRequest({
-    model: 'gpt-3.5-turbo',
+    model,
     temperature: 0.4,
     messages: [
       { role: 'system', content: 'You are a secure executive assistant. Produce a concise report with a safe summary and source provenance.' },
