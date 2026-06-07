@@ -48,6 +48,21 @@ export interface TrustEvent {
   delta: number;
 }
 
+export interface SessionRecord {
+  id: string;
+  query: string;
+  createdAt: number;
+  status: 'pending' | 'resolved' | 'blocked';
+  report?: string;
+  stepsCompleted: number;
+}
+
+export interface PipelineSettings {
+  autoRun: boolean;
+  useSupabase: boolean;
+  enableRealApi: boolean;
+}
+
 export type DemoPhase =
   | 'idle'
   | 'baseline'
